@@ -2,6 +2,8 @@ from tkinter import filedialog
 import tkinter as tk
 import threading
 import json
+import os
+from PIL import Image
 
 from source.utility import toast
 
@@ -42,6 +44,8 @@ def save(data_rows, loop_repetitions, root):
 
 #def export(data_rows):
 
+#def quick_save()
+
 def load(root):
     """
 
@@ -57,10 +61,10 @@ def load(root):
         # Add potential log here
         toast_thread = threading.Thread(target=toast.show_toast(root, "Unable to load file. Please check the file path or try again."))
         toast_thread.start()
-        return ""
+        return None
     rootsave.destroy()
     if file_path == "":  # user cancels
-        return
+        return None
     try:
         with open(file_path, "r") as file:
             data = json.load(file)
@@ -68,6 +72,22 @@ def load(root):
     except Exception as e:
         toast_thread = threading.Thread(target=toast.show_toast(root, "File data is corrupted"))
         toast_thread.start()
-        return ""
+        return None
 
 #def import():
+
+def get_asset(asset_name):
+    # Get the path to the "assets" folder relative to the current script or program
+    root_directory = os.path.dirname(os.path.dirname(os.getcwd()))
+    folder_name = 'assets'
+    image_path = os.path.join(root_directory, folder_name, asset_name)
+    print(image_path)
+    try:
+        image = Image.open(image_path)
+        print(image)
+        return image
+    except FileNotFoundError:
+        print(f"Image file not found: {image_path}") #temp
+    except Exception as e:
+        print(f"An error occurred: {e}") #temp
+
