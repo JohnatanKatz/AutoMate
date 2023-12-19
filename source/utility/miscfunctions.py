@@ -24,7 +24,8 @@ def image_to_base64(image):
     :param image: PIL image
     :return: image encoded to base64 string
     """
-    if image.size[0] == 0 or image.size[1] == 0:
+    h, w = image.size
+    if h == 1 or w == 1:
         return ""
     webp_buffer = BytesIO()
     image.save(webp_buffer, format=image.format)
@@ -39,7 +40,7 @@ def base64_to_image(base64_data):
     :param base64_data: image encoded to base64 string
     :return: PIL image
     """
-    if(base64_data):
+    if(base64_data) == "":
         return Image.new('RGB', (1, 1), (255, 255, 255))
     image_data = base64.b64decode(base64_data.encode("utf-8"))
     image_buffer = BytesIO(image_data)

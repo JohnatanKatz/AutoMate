@@ -61,6 +61,7 @@ class ToastNotification:
             self.toast_window.destroy()
             self.toast_window = None
 
+
 def show_toast(root, message):
     toast = ToastNotification(root, message)
     toast.show()

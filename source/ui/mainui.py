@@ -132,15 +132,15 @@ class ButtonRowApp:
 
         # Screen cut icon button (Replace with your icon)
         record_button = ctk.CTkButton(self.scrollable_frame, text="Record")
-        record_button.configure(command=lambda widget=record_button: self.screen_shot(widget))
+        record_button.configure(command=lambda widget=record_button: self.record_macro(widget))
         #screen_cut_button.grid(row=row_number, column=1, padx=4, pady=4)
         record_button.grid(row=row_number, column=1, padx=4, pady=4)
 
         widgets = self.common_row_ui(option, repeat, pause, row_number)
 
         self.widget_rows.append([new_row_number_entry, record_button, widgets[0], widgets[1], widgets[2], widgets[3]])
-        data = {'object': ImageClick(), 'option': "normal", 'repeat': repeat, 'pause': pause}
-        self.data_rows.append(Macro())
+        data = {'object': Macro(), 'option': "normal", 'repeat': repeat, 'pause': pause}
+        self.data_rows.append(data)
 
     def add_WindowAction_row(self, option, repeat, pause):
         row_number = len(self.widget_rows) + 1
@@ -248,12 +248,41 @@ class ButtonRowApp:
         """
         info = widget.grid_info()
         index = int(info["row"]) - 1
+        self.root.state('iconic')
         image = miscfunctions.get_cut_image()
+        self.root.state('normal')
         name="image"+str(self.image_count)
         self.image_count += 1
         self.set_image(index, image, name)
 
     def record_macro(self, widget):
+        """
+
+        :param widget:
+        :return:
+        """
+
+        info = widget.grid_info()
+        index = int(info["row"]) - 1
+        self.root.state('iconic')
+        self.data_rows[index]['object'].record()
+        self.root.state('normal')
+
+        #create UI Object
+        image_input = ctk.CTkFrame(self.scrollable_frame)
+        image_input.grid(row=index + 1, column=1, padx=0, pady=0)
+
+        cancel_icon = get_asset('cancel_icon.png')  # Image.open('AutoMate/assets/delete_icon.svg')
+        cancel_icon = ctk.CTkImage(cancel_icon)
+        image_widget_name = ctk.CTkButton(image_input, text="", image=cancel_icon, compound="right")
+        image_widget_name.configure(command=lambda widget=image_input: self.unset_image(widget))
+        image_widget_name.pack(side=ctk.LEFT, padx=4, pady=4)
+
+        #Save to the UI
+        self.widget_rows[index][1].destroy()
+        self.widget_rows[index].pop(1)
+        self.widget_rows[index].insert(1, image_input)
+
 
 
 
@@ -264,7 +293,7 @@ class ButtonRowApp:
         """
         try:
             file_path = filedialog.askopenfilename(
-                filetypes=[("Image Files", "*.jpg *.jpeg *.png *apng *.webp *.bmp *.ppm *.pgm")])
+                filetypes=[("Image Files", "*.jpg *.jpeg *.png *apng *.webp *.bmp *.ppm *.pgm *.tiff *.tif")])
             image = Image.open(file_path)
             info = widget.grid_info()
             index = int(info["row"]) - 1

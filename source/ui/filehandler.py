@@ -17,6 +17,7 @@ def save(data_rows, loop_repetitions, root):
     :param root: The main window to draw a toast on if there is an error.
     :return:
     """
+    print("weird")
     rootsave = tk.Tk()
     rootsave.withdraw()  # Hide the main window
     try:
@@ -28,7 +29,6 @@ def save(data_rows, loop_repetitions, root):
         toast_thread = threading.Thread(target=toast.show_toast(root, "Unable to save file. Please check the file path or try again."))
         toast_thread.start()
         return
-
     rootsave.destroy()
     if file_path == "":
         return
@@ -38,7 +38,6 @@ def save(data_rows, loop_repetitions, root):
         data_rows_save.append({'object': row['object'].return_dictionary(), 'option': row['option'],
                                'repeat': row['repeat'], 'pause': row['pause']})
     data_save={'data_rows': data_rows_save, 'loop_repetitions': loop_repetitions}
-    print(data_save)
     with open(file_path, "w") as file:
         json.dump(data_save, file, indent=4)
 
