@@ -43,3 +43,26 @@ def create_via_dictionary(dictionary):
     obj=WindowDynamics()
     obj.set_window(dictionary['window'])
     return obj
+
+
+"""
+def get_window_under_mouse():
+    return gw.getActiveWindow()
+
+def save_window_info(window_title):
+    with open("window_info.txt", "a", encoding="utf-8") as file:
+        file.write(f"{datetime.now()}: {window_title}\n")
+
+def on_click(x, y, button, pressed):
+    if pressed:
+        window = get_window_under_mouse()
+        window_title = window.title
+        save_window_info(window_title)
+        print(f"Clicked on: {window_title}")
+
+# Create a listener thread for mouse events
+with Listener(on_click=on_click) as listener:
+    listener.join()
+
+
+"""

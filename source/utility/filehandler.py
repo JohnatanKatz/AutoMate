@@ -17,7 +17,6 @@ def save(data_rows, loop_repetitions, root):
     :param root: The main window to draw a toast on if there is an error.
     :return:
     """
-    print("weird")
     rootsave = tk.Tk()
     rootsave.withdraw()  # Hide the main window
     try:

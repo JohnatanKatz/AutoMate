@@ -10,6 +10,9 @@ class Macro:
     def set_events(self, events):
         self.events = events
 
+    def unset_events(self):
+        self.events = []
+
     def on_key_press(self, key):
         """try:
             print('alphanumeric key {0} pressed'.format(
