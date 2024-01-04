@@ -105,7 +105,7 @@ class ImageClickUI(GenericLineUI):
 
         cancel_icon = get_asset('cancel_icon.png')  # Image.open('AutoMate/assets/delete_icon.svg')
         cancel_icon = ctk.CTkImage(cancel_icon)
-        cancel_widget = ctk.CTkButton(image_input, text="", image=cancel_icon, compound="right")
+        cancel_widget = ctk.CTkButton(image_input, text="", image=cancel_icon, compound="right", width=0)
         cancel_widget.configure(command=lambda widget=image_input: self.unset_image(widget))
         cancel_widget.pack(side=ctk.LEFT, padx=(0, 4), pady=4)
 
@@ -118,6 +118,11 @@ class ImageClickUI(GenericLineUI):
         self.grid_data.widget_rows[index].pop(1)
         self.grid_data.widget_rows[index].insert(1, image_input)
         self.root.update()
+
+    def view_image(self, widget):
+        info = widget.grid_info()
+        index = int(info["row"]) - 1
+        self.grid_data.data_rows[index]['object'].unset_img()
 
     def unset_image(self, widget):
         """
