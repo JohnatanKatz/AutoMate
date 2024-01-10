@@ -11,7 +11,7 @@ def create_color_display_with_buttons_app():
         "Error (#CF6679)": "#CF6679",
         "On Primary (#FFFFFF)": "#FFFFFF",
         "On Secondary (#FFFFFF)": "#FFFFFF",
-        "On Background (#E0E0E0)": "#E0E0E0",
+        "On Background (#E0E0E0)": "#242424",
         "On Surface (#E0E0E0)": "#E0E0E0"
     }
 
@@ -59,4 +59,20 @@ general selection
         "Primary Color (#2979FF)": "#091540",
         "Primary Variant (#1565C0)": "#1565C0",
         "Secondary Color (#03DAC6)": "#03DAC6",
+        
+        
+        
+        
+        colors = {
+        "Primary Color (#2979FF)": "#1B4242",
+        "Primary Variant (#1565C0)": "#286464",
+        "Secondary Color (#03DAC6)": "#468282",
+        "Background (#121212)": "#242424",
+        "Surface (#1E1E1E)": "#1E1E1E",
+        "Error (#CF6679)": "#CF6679",
+        "On Primary (#FFFFFF)": "#FFFFFF",
+        "On Secondary (#FFFFFF)": "#FFFFFF",
+        "On Background (#E0E0E0)": "#E0E0E0",
+        "On Surface (#E0E0E0)": "#E0E0E0"
+    }
 """

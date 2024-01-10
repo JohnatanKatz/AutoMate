@@ -1,7 +1,7 @@
 import tkinter as tk
 import customtkinter as ctk
 from source.utility.filehandler import get_asset
-
+import config
 
 class GenericLineUI:
 
@@ -22,7 +22,7 @@ class GenericLineUI:
         # Numerical input field for changing row position
         self.new_row_number_entry = ctk.CTkEntry(scrollable_frame, textvariable=row_number_var)
         self.new_row_number_entry.configure(width=40)
-        self.new_row_number_entry.grid(row=self.row_number, column=0, padx=4, pady=4)
+        self.new_row_number_entry.grid(row=self.row_number, column=0, padx=8, pady=8)
         self.new_row_number_entry.bind("<FocusOut>",
                                   lambda event, widget=self.new_row_number_entry: self.update_row_position(event, widget))
         self.new_row_number_entry.bind("<Return>",
@@ -31,15 +31,15 @@ class GenericLineUI:
         options = ["Normal", "And", "Skip"]
         dropdown_var = tk.StringVar(scrollable_frame)
         dropdown_var.set(row_data['option'])  # default Normal
-        self.dropdown = ctk.CTkOptionMenu(scrollable_frame, values=options)
-        self.dropdown.grid(row=self.row_number, column=2, padx=4, pady=4)
+        self.dropdown = ctk.CTkOptionMenu(scrollable_frame, values=options, width=100)
+        self.dropdown.grid(row=self.row_number, column=2, padx=8, pady=8)
 
         # Repeat Input
         repeat_variable = tk.StringVar(value=str(row_data['repeat']))  # default 1
 
         self.repeat_entry = ctk.CTkEntry(scrollable_frame, textvariable=repeat_variable)
-        self.repeat_entry.configure(width=50)
-        self.repeat_entry.grid(row=self.row_number, column=3, padx=4, pady=4)
+        self.repeat_entry.configure(width=60)
+        self.repeat_entry.grid(row=self.row_number, column=3, padx=8, pady=8)
         self.repeat_entry.bind("<FocusOut>", lambda event, widget=self.repeat_entry: self.set_repeat(event, widget))
         self.repeat_entry.bind("<Return>", lambda event, widget=self.repeat_entry: self.set_repeat(event, widget))
 
@@ -48,16 +48,21 @@ class GenericLineUI:
 
         self.pause_entry = ctk.CTkEntry(scrollable_frame, textvariable=pause_variable)
         self.pause_entry.configure(width=60)
-        self.pause_entry.grid(row=self.row_number, column=4, padx=4, pady=4)
+        self.pause_entry.grid(row=self.row_number, column=4, padx=8, pady=8)
         self.pause_entry.bind("<FocusOut>", lambda event, widget=self.pause_entry: self.set_pause(event, widget))
         self.pause_entry.bind("<Return>", lambda event, widget=self.pause_entry: self.set_pause(event, widget))
+
+        #Description
+        self.description_button = ctk.CTkButton(scrollable_frame, text="View", width=100)
+        self.description_button.configure(command=lambda widget=self.description_button: self.description(widget))
+        self.description_button.grid(row=self.row_number, column=5, padx=8, pady=8)
 
         # Delete button
         del_icon = get_asset('delete_icon.png')  # Image.open('AutoMate/assets/delete_icon.svg')
         del_icon = ctk.CTkImage(del_icon)
-        self.delete_button = ctk.CTkButton(scrollable_frame, text="Delete", image=del_icon)
+        self.delete_button = ctk.CTkButton(scrollable_frame, text="", image=del_icon, width=0)
         self.delete_button.configure(command=lambda widget=self.delete_button: self.delete_row(widget))
-        self.delete_button.grid(row=self.row_number, column=5, padx=4, pady=4)
+        self.delete_button.grid(row=self.row_number, column=6, padx=8, pady=8)
 
 
     def set_repeat(self, event, widget):
@@ -163,6 +168,38 @@ class GenericLineUI:
                 widget.grid(row=index+1, column=col)
             index = index + 1
             print(self.grid_data.widget_rows)
+
+    def description(self, widget):
+        def save_text():
+            updated_text = text_area.get("1.0", "end-1c")
+            self.grid_data.data_rows[index]['description']=updated_text
+            description_window.destroy()
+
+        info = widget.grid_info()
+        index = int(info["row"]) - 1
+
+        description_window = ctk.CTkToplevel(self.root)
+        description_window.title("Simple Text Editor")
+        description_window.geometry("600x400")
+        description_window.transient(self.root)
+
+        print(self.grid_data.data_rows[index])
+        text_content = self.grid_data.data_rows[index]['description']
+
+        text_frame = ctk.CTkFrame(description_window)
+        text_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        text_area = ctk.CTkTextbox(text_frame, width=500, height=300, wrap="word")
+        text_area.pack(side="left", fill="both", expand=True)
+
+        scrollbar = ctk.CTkScrollbar(text_frame, command=text_area.yview)
+        scrollbar.pack(side="right", fill="y")
+
+        text_area.configure(yscrollcommand=scrollbar.set)
+        text_area.insert("1.0", text_content)
+
+        save_button = ctk.CTkButton(description_window, text="Save and Close", command=save_text)
+        save_button.pack(pady=10)
 
 
 

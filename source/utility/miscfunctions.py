@@ -46,3 +46,6 @@ def base64_to_image(base64_data):
     image_buffer = BytesIO(image_data)
     image = Image.open(image_buffer)
     return image
+
+def get_window_position(window):
+    return [int(coord) for coord in window.geometry().split('+')[1:]]

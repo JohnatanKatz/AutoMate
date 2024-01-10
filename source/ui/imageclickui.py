@@ -1,6 +1,7 @@
 import os
 from tkinter import filedialog
-from PIL import Image
+import tkinter as tk
+from PIL import Image, ImageTk
 from lineui import GenericLineUI
 import customtkinter as ctk
 from source.utility.filehandler import get_asset
@@ -8,7 +9,7 @@ import threading
 from source.automations.imageclick import ImageClick
 from source.utility import miscfunctions
 from source.utility.toast import show_toast
-
+import config
 
 class ImageClickUI(GenericLineUI):
     def __init__(self, scrollable_frame, row_data, grid_data, root):
@@ -26,22 +27,22 @@ class ImageClickUI(GenericLineUI):
         image_input.grid(row=self.row_number, column=1, padx=0, pady=0)
 
         # Screen cut icon button (Replace with your icon)
-        screen_cut_button = ctk.CTkButton(image_input, text="Screen Cut")
+        screen_cut_button = ctk.CTkButton(image_input, text="Screen Cut", width=100)
         screen_cut_button.configure(command=lambda widget=image_input: self.screen_shot(widget))
         # screen_cut_button.grid(row=row_number, column=1, padx=4, pady=4)
         screen_cut_button.pack(side=ctk.LEFT, padx=4, pady=4)
 
         # Open file icon button (Replace with your icon)
-        open_file_button = ctk.CTkButton(image_input, text="Open File")
+        open_file_button = ctk.CTkButton(image_input, text="Open File", width=100)
         open_file_button.configure(command=lambda widget=image_input: self.open_image(widget))
         # open_file_button.grid(row=row_number, column=2, padx=4, pady=4)
         open_file_button.pack(side=ctk.RIGHT, padx=4, pady=4)
 
         self.grid_data.widget_rows.append(
-            [self.new_row_number_entry, image_input, self.dropdown, self.repeat_entry, self.pause_entry,
+            [self.new_row_number_entry, image_input, self.dropdown, self.repeat_entry, self.pause_entry, self.description_button,
              self.delete_button])
         data = {'object': ImageClick(), 'option': row_data['option'], 'repeat': row_data['repeat'],
-                'pause': row_data['pause']}
+                'pause': row_data['pause'], 'description': row_data['description']}
         self.grid_data.data_rows.append(data)
 
     def open_image(self, widget):
@@ -99,18 +100,18 @@ class ImageClickUI(GenericLineUI):
         image_input.grid(row=index + 1, column=1, padx=0, pady=0)
 
         # Screen cut icon button (Replace with your icon)
-        image_widget_name = ctk.CTkButton(image_input, text=display_name, compound="right")
-        image_widget_name.configure(command=lambda widget=image_input: self.unset_image(widget))
+        image_widget_name = ctk.CTkButton(image_input, text=display_name, compound="right", width=100)
+        image_widget_name.configure(command=lambda widget=image_input: self.view_image(widget))
         image_widget_name.pack(side=ctk.LEFT, padx=(4,0), pady=4)
 
         cancel_icon = get_asset('cancel_icon.png')  # Image.open('AutoMate/assets/delete_icon.svg')
         cancel_icon = ctk.CTkImage(cancel_icon)
         cancel_widget = ctk.CTkButton(image_input, text="", image=cancel_icon, compound="right", width=0)
         cancel_widget.configure(command=lambda widget=image_input: self.unset_image(widget))
-        cancel_widget.pack(side=ctk.LEFT, padx=(0, 4), pady=4)
+        cancel_widget.pack(side=ctk.LEFT, padx=(4), pady=4)
 
         # Open file icon button (Replace with your icon)
-        play_button = ctk.CTkButton(image_input, text="Play")
+        play_button = ctk.CTkButton(image_input, text="Play", width=100)
         play_button.configure(command=lambda widget=image_input: self.play_button_func(widget))
         play_button.pack(side=ctk.RIGHT, padx=4, pady=4)
 
@@ -122,7 +123,36 @@ class ImageClickUI(GenericLineUI):
     def view_image(self, widget):
         info = widget.grid_info()
         index = int(info["row"]) - 1
-        self.grid_data.data_rows[index]['object'].unset_img()
+        print("are we here")
+        image_window = ctk.CTkToplevel()
+        image_window.transient(self.root)
+
+        image_window.title("Image Display")
+        image_window.geometry("400x450")
+
+        x, y = miscfunctions.get_window_position(self.root)
+        image_window.geometry(f"+{x + 100}+{y + 40}")
+
+        photo = ImageTk.PhotoImage(self.grid_data.data_rows[index]['object'].get_image())
+
+       # image_label = tk.Label(image_window, image=photo)
+       # image_label.image = photo
+        #image_label.pack(pady=10)
+
+        name_entry = ctk.CTkEntry(image_window, placeholder_text="Enter image name")
+        name_entry.insert(0, self.grid_data.data_rows[index]['object'].get_imgName())
+        name_entry.pack(pady=10)
+
+        set_name_button = ctk.CTkButton(image_window, text="Set New Name",
+                                        command=lambda: self.set_new_name(self.grid_data.data_rows[index]['object'], name_entry))
+        set_name_button.pack(pady=10)
+
+
+    def set_new_name(self, image_click, name_entry):
+        new_name = name_entry.get()
+        image_click.set_img_name(new_name)
+        print(f"New Image Name: {new_name}")
+
 
     def unset_image(self, widget):
         """
@@ -138,13 +168,13 @@ class ImageClickUI(GenericLineUI):
         image_input.grid(row=index+1, column=1, padx=0, pady=0)
 
         # Screen cut icon button (Replace with your icon)
-        screen_cut_button = ctk.CTkButton(image_input, text="Screen Cut")
+        screen_cut_button = ctk.CTkButton(image_input, text="Screen Cut", width=100)
         screen_cut_button.configure(command=lambda widget=image_input: self.screen_shot(widget))
         # screen_cut_button.grid(row=row_number, column=1, padx=4, pady=4)
         screen_cut_button.pack(side=ctk.LEFT, padx=4, pady=4)
 
         # Open file icon button (Replace with your icon)
-        open_file_button = ctk.CTkButton(image_input, text="Open File")
+        open_file_button = ctk.CTkButton(image_input, text="Open File", width=100)
         open_file_button.configure(command=lambda widget=image_input: self.open_image(widget))
         # open_file_button.grid(row=row_number, column=2, padx=4, pady=4)
         open_file_button.pack(side=ctk.RIGHT, padx=4, pady=4)

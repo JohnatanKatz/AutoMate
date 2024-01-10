@@ -35,7 +35,7 @@ def save(data_rows, loop_repetitions, root):
     data_rows_save = []
     for row in data_rows:
         data_rows_save.append({'object': row['object'].return_dictionary(), 'option': row['option'],
-                               'repeat': row['repeat'], 'pause': row['pause']})
+                               'repeat': row['repeat'], 'pause': row['pause'], 'description': row['description']})
     data_save={'data_rows': data_rows_save, 'loop_repetitions': loop_repetitions}
     with open(file_path, "w") as file:
         json.dump(data_save, file, indent=4)

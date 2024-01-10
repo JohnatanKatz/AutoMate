@@ -26,6 +26,12 @@ class ImageClick:
     def unset_img_name(self):
         self.imgName = ""
 
+    def get_image(self):
+        return self.img
+
+    def get_imgName(self):
+        return self.imgName
+
     def do_click(self):
         button = pyautogui.locateOnScreen(self.img)  # check exception after
         # i=0.9

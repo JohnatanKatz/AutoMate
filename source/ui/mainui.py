@@ -5,6 +5,7 @@ from imageclickui import ImageClickUI
 from macroui import MacroUI
 #from windowdynamicsui import WindowDynamicsUI
 from autogridobject import AutoGridUI, AutoGridData
+import config
 
 
 def trace_callback(*args):
@@ -19,7 +20,7 @@ class ButtonRowApp:
         grid_data = AutoGridData()
 
         self.root.title("AutoMate")
-        self.root.geometry(f"{1100}x{580}")
+        self.root.geometry(f"{960}x{580}")
 
         self.root.grid_columnconfigure(1, weight=1)
         self.root.grid_columnconfigure(2, weight=0)
@@ -33,8 +34,8 @@ class ButtonRowApp:
         logo_label = ctk.CTkLabel(sidebar_frame, text="AutoMate", text_color=primary_color, font=ctk.CTkFont(size=20, weight="bold"), anchor="center")
         logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        sidebar_button_3 = ctk.CTkButton(sidebar_frame)
-        sidebar_button_3.grid(row=4, column=0, padx=20, pady=10)
+        #sidebar_button_3 = ctk.CTkButton(sidebar_frame)
+        #sidebar_button_3.grid(row=4, column=0, padx=20, pady=10)
 
         scaling_label = ctk.CTkLabel(sidebar_frame, text="UI Scaling:", anchor="w")
         scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
@@ -45,8 +46,10 @@ class ButtonRowApp:
         main_grid = AutoGridUI(root, grid_data)
         sidebar_load = ctk.CTkButton(sidebar_frame, text="Load", command=lambda: main_grid.load_ui())
         sidebar_load.grid(row=1, column=0, padx=20, pady=10)
-        sidebar_save = ctk.CTkButton(sidebar_frame, text="Save", command=lambda: main_grid.save_ui())
+        sidebar_save = ctk.CTkButton(sidebar_frame, text="Save", command=lambda: main_grid.save_ui(), fg_color=config.COLOR_PRIMARY)
         sidebar_save.grid(row=2, column=0, padx=20, pady=10)
+        sidebar_play_all = ctk.CTkButton(sidebar_frame, text="Play All", command=lambda: main_grid.play_all())
+        sidebar_play_all.grid(row=3, column=0, padx=20, pady=10)
 
 
         file_menu = tk.Menu(self.root, tearoff=0)

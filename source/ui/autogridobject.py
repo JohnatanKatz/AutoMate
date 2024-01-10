@@ -6,6 +6,7 @@ import source.automations.windowdynamics as windowdynamics
 from macroui import MacroUI
 from imageclickui import ImageClickUI
 import time
+import config
 
 class AutoGridData:
     def __init__(self):
@@ -17,40 +18,64 @@ class AutoGridData:
 
 class AutoGridUI:
     def __init__(self, root, grid_data):
+        # copilot please write me documentation for this function
+        """
+        The purpose of this function is to create the main grid for the user to add automations to.
+        It is the main UI for the user to interact with the program.
+
+        :param root: The tkinter root window
+        :param grid_data: A class containing the data for the grid
+        """
 
         self.root=root
         self.grid_data = AutoGridData()
         default_row_data = {'option': "Normal", 'repeat': 1,
-                            'pause': 0}
+                            'pause': 0, 'description': ""}
 
-        self.scrollable_frame = ctk.CTkScrollableFrame(self.root, label_text="CTkScrollableFrame")
-        self.scrollable_frame.grid(row=0, column=1, padx=(20, 0), pady=(20, 20), sticky="nsew")
+        self.scrollable_frame = ctk.CTkScrollableFrame(self.root)
+        self.scrollable_frame.grid(row=0, column=1, padx=(20, 0), pady=(10, 20), sticky="nsew")
         self.scrollable_frame.grid_columnconfigure(0, weight=1)
 
 
 
         ImageClickUI(self.scrollable_frame, default_row_data, self.grid_data, root)
 
-        # title_label = ctk.CTkLabel(self.scrollable_frame, text="Full Repetitions")
-        # title_label.grid(row=0, column=3, padx=4, pady=4)
+        title_label = ctk.CTkLabel(self.scrollable_frame, text="Index")
+        title_label.grid(row=0, column=0, padx=4, pady=4)
+        title_label = ctk.CTkLabel(self.scrollable_frame, text="Label required")
+        title_label.grid(row=0, column=1, padx=4, pady=4)
         title_label = ctk.CTkLabel(self.scrollable_frame, text="Runtime")
         title_label.grid(row=0, column=2, padx=4, pady=4)
         title_label = ctk.CTkLabel(self.scrollable_frame, text="Repetitions")
         title_label.grid(row=0, column=3, padx=4, pady=4)
-        title_label = ctk.CTkLabel(self.scrollable_frame, text="Pause S")
+        title_label = ctk.CTkLabel(self.scrollable_frame, text="Pause(sec)")
         title_label.grid(row=0, column=4, padx=4, pady=4)
+        title_label = ctk.CTkLabel(self.scrollable_frame, text="Description")
+        title_label.grid(row=0, column=5, padx=4, pady=4)
 
-        grid_button = ctk.CTkFrame(self.root)
-        grid_button.grid(row=1, column=1)  # padx=8, pady=8)
+        below_matrix = ctk.CTkFrame(self.root, fg_color=config.COLOR_SURFACE)
+        below_matrix.grid(row=1, column=1, sticky="nsew", padx=(20, 0), pady=8)
 
-        add_row_button = ctk.CTkButton(grid_button, text="Add Image Recognition",
+        add_label = ctk.CTkLabel(below_matrix, text="Add Automation:")
+        add_label.pack(side="left", anchor="w", padx=8, pady=4)
+
+        grid_button = ctk.CTkFrame(below_matrix, fg_color=config.COLOR_SURFACE)
+        grid_button.pack(side="right", anchor="e", padx=4, pady=4)
+
+        add_row_button = ctk.CTkButton(grid_button, text="Image Recognition",
                                        command=lambda: ImageClickUI(self.scrollable_frame, default_row_data, self.grid_data, root))
         add_row_button.grid(row=0, column=0, padx=10, pady=10)
-        add_row_button = ctk.CTkButton(grid_button, text="Add Macro",
+        add_row_button = ctk.CTkButton(grid_button, text="Macro",
                                        command=lambda: MacroUI(self.scrollable_frame, default_row_data, self.grid_data, root))
         add_row_button.grid(row=0, column=1, padx=10, pady=10)
-        add_row_button = ctk.CTkButton(grid_button, text="Play all", command=lambda: self.play_all())
-        add_row_button.grid(row=0, column=2, padx=10, pady=10)
+
+        #Makes the grid evenly spaced
+        num_columns = self.scrollable_frame.grid_size()[0]
+        for i in range(num_columns):
+            self.scrollable_frame.grid_columnconfigure(i, weight=1)
+
+
+
 
     def play_all(self):
         """
@@ -86,8 +111,8 @@ class AutoGridUI:
                 if i==len(object_array):
                     i=0
                 if repeat_array[i]>0:
-                    repeat_array[i]=-1
-                    print("play")
+                    repeat_array[i]=repeat_array[i]-1
+                    print("play", repeat_array[i])
                     object_array[i]['object'].play()
                     time.sleep(object_array[i]['pause'])
 
@@ -105,7 +130,7 @@ class AutoGridUI:
         self.loop_repetitions=data['loop_repetitions']
         i=0
         for row in data['data_rows']:
-            row_data = {'option': row['option'], 'repeat': row['repeat'], 'pause': row['pause']}
+            row_data = {'option': row['option'], 'repeat': row['repeat'], 'pause': row['pause'], 'description': row['description']}
             if row['object']['type'] == 'imageClick':
                 ImageClickUI(self.scrollable_frame, row_data, self.grid_data, self.root)
                 self.grid_data.data_rows[i]['object'] = imageclick.create_via_dictionary(row['object'])
