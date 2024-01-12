@@ -1,11 +1,9 @@
 import tkinter as tk
 import customtkinter as ctk
 from source.utility.toast import show_toast
-from imageclickui import ImageClickUI
-from macroui import MacroUI
 #from windowdynamicsui import WindowDynamicsUI
-from autogridobject import AutoGridUI, AutoGridData
-import config
+from source.ui.autogridobject import AutoGridUI, AutoGridData
+import source.ui.config as config
 
 
 def trace_callback(*args):
@@ -72,7 +70,6 @@ class ButtonRowApp:
     def change_scaling_event(self, new_scaling: str):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         ctk.set_widget_scaling(new_scaling_float)
-
 
 if __name__ == "__main__":
     root = ctk.CTk()

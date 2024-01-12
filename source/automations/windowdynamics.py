@@ -21,6 +21,8 @@ class WindowDynamics:
             window.minimize()
         elif toggle == "maximize":
             window.maximize()
+        elif toggle == "focus":
+            window.activate()
 
     def on_click(self, x, y, button, pressed):
         if pressed:

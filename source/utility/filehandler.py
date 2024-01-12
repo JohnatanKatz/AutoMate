@@ -76,10 +76,11 @@ def load(root):
 
 def get_asset(asset_name):
     # Get the path to the "assets" folder relative to the current script or program
-    root_directory = os.path.dirname(os.path.dirname(os.getcwd()))
-    folder_name = 'assets'
+    root_directory = os.path.dirname(os.getcwd())
+    folder_name = 'AutoMate\\assets'
+    print(root_directory)
     image_path = os.path.join(root_directory, folder_name, asset_name)
-    print(image_path)
+    print("image_page",image_path)
     try:
         image = Image.open(image_path)
         print(image)

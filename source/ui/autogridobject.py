@@ -3,10 +3,10 @@ from source.utility.filehandler import load, save
 import source.automations.imageclick as imageclick
 import source.automations.macro as macro
 import source.automations.windowdynamics as windowdynamics
-from macroui import MacroUI
-from imageclickui import ImageClickUI
+from source.ui.macroui import MacroUI
+from source.ui.imageclickui import ImageClickUI
 import time
-import config
+import source.ui.config as config
 
 class AutoGridData:
     def __init__(self):
@@ -90,7 +90,7 @@ class AutoGridUI:
         and_array = []
         play_all_array = []
         for row in self.grid_data.data_rows: #prepares
-            print(row)
+            #print(row)
             if row['option']=="And":
                 and_array.append(row)
                 repeat_counter.append(row['repeat'])
@@ -101,20 +101,30 @@ class AutoGridUI:
                 repeat_counter.append(row['repeat'])
                 and_repeat_array.append(repeat_counter)
                 repeat_counter = []
-        print("lel")
+        """
+        add a 0.5  or 0.2 second pause for the do until success option.
+        self.root.withdraw()
+        image = miscfunctions.get_cut_image()
+        self.root.deiconify()
+        self.root.focus_set()
+        """
+        #print("lel")
+        self.root.withdraw()
         for object_array, repeat_array in zip(play_all_array, and_repeat_array):
-            print("test")
-            print(object_array, repeat_array)
+            #print("test")
+            #print(object_array, repeat_array)
             i = 0
             while sum(repeat_array)>0:
-                print("repeat", repeat_array)
+                #print("repeat", repeat_array)
                 if i==len(object_array):
                     i=0
                 if repeat_array[i]>0:
                     repeat_array[i]=repeat_array[i]-1
-                    print("play", repeat_array[i])
+                    #print("play", repeat_array[i])
                     object_array[i]['object'].play()
                     time.sleep(object_array[i]['pause'])
+        self.root.deiconify()
+        self.root.focus_set()
 
 
     def load_ui(self):

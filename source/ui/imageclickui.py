@@ -2,14 +2,14 @@ import os
 from tkinter import filedialog
 import tkinter as tk
 from PIL import Image, ImageTk
-from lineui import GenericLineUI
+from source.ui.lineui import GenericLineUI
 import customtkinter as ctk
 from source.utility.filehandler import get_asset
 import threading
 from source.automations.imageclick import ImageClick
 from source.utility import miscfunctions
 from source.utility.toast import show_toast
-import config
+import source.ui.config as config
 
 class ImageClickUI(GenericLineUI):
     def __init__(self, scrollable_frame, row_data, grid_data, root):
@@ -72,11 +72,9 @@ class ImageClickUI(GenericLineUI):
         """
         info = widget.grid_info()
         index = int(info["row"]) - 1
-        #self.root.state('iconic')
         self.root.withdraw()
         image = miscfunctions.get_cut_image()
         self.root.deiconify()
-        #self.root.state('normal')
         self.root.focus_set()
         name="image"+str(self.grid_data.image_count)
         self.grid_data.image_count += 1
@@ -180,4 +178,5 @@ class ImageClickUI(GenericLineUI):
         open_file_button.pack(side=ctk.RIGHT, padx=4, pady=4)
 
         self.grid_data.widget_rows[index][1].destroy()
+        self.grid_data.widget_rows[index].pop(1)
         self.grid_data.widget_rows[index].insert(1, image_input)

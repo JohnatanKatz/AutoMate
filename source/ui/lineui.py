@@ -1,7 +1,7 @@
 import tkinter as tk
 import customtkinter as ctk
 from source.utility.filehandler import get_asset
-import config
+import source.ui.config as config
 
 class GenericLineUI:
 
@@ -107,9 +107,10 @@ class GenericLineUI:
     def play_button_func(self, widget):
         info = widget.grid_info()
         index = int(info["row"]) - 1
-        self.root.state('iconic')
+        self.root.withdraw()
         self.grid_data.data_rows[index]['object'].play()
-        self.root.state('normal')
+        self.root.deiconify()
+        self.root.focus_set()
 
     def update_row_position(self, event, widget):
         """
@@ -130,16 +131,23 @@ class GenericLineUI:
                 event.type == tk.EventType.KeyPress and event.keysym == 'Return')):
             raise Exception("Event type is not <FocusOut> or <Return>", event) # change to external library error.
         if not(widget.get().isdigit()):
+            print("exit1")
             widget.delete(0, ctk.END)
-            widget.insert(0, index)
+            widget.insert(0, index+1)
             self.root.focus_set()
             return
 
         new_position = int(widget.get()) - 1
-        if index == new_position or new_position < 0:  #Same position or negative, do nothing.
+        if index == new_position or new_position < 1:  #Same position or negative, do nothing.
+            print("exit2")
+            print(new_position, index)
+            widget.delete(0, ctk.END)
+            widget.insert(0, index+1)
             self.root.focus_set()
             return
         if new_position > len(self.grid_data.widget_rows) - 1:
+            print("exit3")
+            print(new_position, index)
             widget.delete(0, ctk.END)
             widget.insert(0, str(len(self.grid_data.widget_rows)))
             new_position = len(self.grid_data.widget_rows) - 1

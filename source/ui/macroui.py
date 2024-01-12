@@ -1,8 +1,8 @@
-from lineui import GenericLineUI
+from source.ui.lineui import GenericLineUI
 import customtkinter as ctk
 from source.automations.macro import Macro
 from source.utility.filehandler import get_asset
-import config
+import source.ui.config
 
 class MacroUI(GenericLineUI):
     def __init__(self, scrollable_frame, row_data, grid_data, root):
@@ -79,4 +79,5 @@ class MacroUI(GenericLineUI):
         record_button.pack(anchor = 'center', padx=4, pady=4)
 
         self.grid_data.widget_rows[index][1].destroy()
+        self.grid_data.widget_rows[index].pop(1)
         self.grid_data.widget_rows[index].insert(1, macro_input)
