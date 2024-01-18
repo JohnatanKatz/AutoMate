@@ -6,22 +6,38 @@ class WindowDynamics:
 
     def __init__(self):
         self.window = ""
+        self.toggle = "Focus"
 
     def set_window(self, window):
         self.window = window
 
+    def set_toggle(self, toggle):
+        self.toggle = toggle
+
+    def unset_all(self):
+        self.window = ""
+        self.toggle = "Focus"
+
     def get_window_under_mouse(self):
         return gw.getActiveWindow()
 
-    def toggle_window(self, toggle):
+    def play(self):
+        print("Playing window dynamics", self.window, self.toggle)
         if self.window == "":
-            raise Exception("")
-        window = gw.getWindowsWithTitle(self.window)
-        if toggle == "minimize":
+            raise Exception("Window title is empty")
+
+        windows = gw.getWindowsWithTitle(self.window)
+        if len(windows) == 0:
+            print("No window found with title:", self.window)
+            return
+        print(windows)
+        window = windows[0]
+        print(window)
+        if self.toggle == "Minimize":
             window.minimize()
-        elif toggle == "maximize":
+        elif self.toggle == "Maximize":
             window.maximize()
-        elif toggle == "focus":
+        elif self.toggle == "Focus":
             window.activate()
 
     def on_click(self, x, y, button, pressed):
@@ -41,9 +57,13 @@ class WindowDynamics:
             keyboard_listener.join()
             mouse_listener.stop()
 
+    def return_dictionary(self):
+        return {'type': 'windowDynamics', 'window': self.window, 'toggle': self.toggle}
+
 def create_via_dictionary(dictionary):
     obj=WindowDynamics()
     obj.set_window(dictionary['window'])
+    obj.set_toggle(dictionary['toggle'])
     return obj
 
 

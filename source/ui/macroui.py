@@ -23,18 +23,20 @@ class MacroUI(GenericLineUI):
         self.grid_data.data_rows.append(data)
 
     def record_macro(self, widget):
-        """
-
-        :param widget:
-        :return:
-        """
-
         info = widget.grid_info()
         index = int(info["row"]) - 1
         self.root.withdraw()
         self.grid_data.data_rows[index]['object'].record()
         self.root.deiconify()
         self.root.focus_set()
+        self.set_macroUI(index)
+
+    def set_macroUI(self, index):
+        """
+
+        :param widget:
+        :return:
+        """
 
         # create UI Object
         macro_input = ctk.CTkFrame(self.scrollable_frame)
@@ -81,3 +83,18 @@ class MacroUI(GenericLineUI):
         self.grid_data.widget_rows[index][1].destroy()
         self.grid_data.widget_rows[index].pop(1)
         self.grid_data.widget_rows[index].insert(1, macro_input)
+
+    def view_object(self, widget):
+        if hasattr(self, 'object_window') and self.object_window.winfo_exists():
+            self.object_window.focus_set()
+            return
+        info = widget.grid_info()
+        index = int(info["row"]) - 1
+        self.object_window = tk.Toplevel(self.root)
+        self.object_window.title("Macro")
+        self.object_window.wm_geometry(f"{980}x{580}")
+        self.object_window.grid_columnconfigure(1, weight=1)
+
+        #text_area.configure(state="normal")  # Temporarily enable editing to insert text
+
+        #text_area.configure(state="disabled")  # Disable editing

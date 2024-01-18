@@ -13,12 +13,14 @@ class FileDataError(Exception):
 
 class ButtonRowApp:
     def __init__(self, root):
+        ctk.set_appearance_mode("dark")  # Modes: system (default), light, dark
+        ctk.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
         self.root = root
         #program data intilization
         grid_data = AutoGridData()
 
         self.root.title("AutoMate")
-        self.root.geometry(f"{960}x{580}")
+        self.root.wm_geometry(f"{980}x{580}")
 
         self.root.grid_columnconfigure(1, weight=1)
         self.root.grid_columnconfigure(2, weight=0)
@@ -44,7 +46,7 @@ class ButtonRowApp:
         main_grid = AutoGridUI(root, grid_data)
         sidebar_load = ctk.CTkButton(sidebar_frame, text="Load", command=lambda: main_grid.load_ui())
         sidebar_load.grid(row=1, column=0, padx=20, pady=10)
-        sidebar_save = ctk.CTkButton(sidebar_frame, text="Save", command=lambda: main_grid.save_ui(), fg_color=config.COLOR_PRIMARY)
+        sidebar_save = ctk.CTkButton(sidebar_frame, text="Save", command=lambda: main_grid.save_ui()) #fg_color=config.COLOR_PRIMARY
         sidebar_save.grid(row=2, column=0, padx=20, pady=10)
         sidebar_play_all = ctk.CTkButton(sidebar_frame, text="Play All", command=lambda: main_grid.play_all())
         sidebar_play_all.grid(row=3, column=0, padx=20, pady=10)
@@ -70,9 +72,3 @@ class ButtonRowApp:
     def change_scaling_event(self, new_scaling: str):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         ctk.set_widget_scaling(new_scaling_float)
-
-if __name__ == "__main__":
-    root = ctk.CTk()
-    app = ButtonRowApp(root)
-
-    root.mainloop()

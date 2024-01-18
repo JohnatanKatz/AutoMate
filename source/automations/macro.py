@@ -51,8 +51,33 @@ class Macro:
             keyboard_listener.join()
             mouse_listener.stop()
 
+    """def return_dictionary(self):
+        print (self.events)
+        events_json_ready = [list(event) for event in self.events]
+        print (events_json_ready)
+        return {'type': 'macro', 'events': events_json_ready}"""
+
     def return_dictionary(self):
-        return {'type': 'macro', 'events': self.events}
+        events_json_ready = []
+        for event in self.events:
+            event_type, action_type, data = event
+            if event_type == 'key':
+                # Convert pynput key object to string
+                if isinstance(data, keyboard.Key):
+                    data = str(data)
+                elif isinstance(data, keyboard.KeyCode):
+                    data = data.char
+            elif event_type == 'mouse':
+                if action_type == 'click':
+                    x, y, button, pressed = data
+                    data = (x, y, str(button), pressed)
+                elif action_type == 'scroll':
+                    x, y, dx, dy = data
+                    data = (x, y, dx, dy)
+
+            events_json_ready.append((event_type, action_type, data))
+
+        return {'type': 'macro', 'events': events_json_ready}
 
     def load(self, file_name):
         with open(file_name, "r") as f:
@@ -90,13 +115,92 @@ class Macro:
                 mouse_controller.position = (x, y)
                 mouse_controller.scroll(dx, dy)
 
+"""
 def create_via_dictionary(dictionary):
+    print(dictionary)
     obj=Macro()
-    obj.set_events(dictionary['events'])
+    events=[tuple(event) for event in dictionary['events']]
+    obj.set_events(events)
     return obj
+"""
+def create_via_dictionary(dictionary):
+    macro_obj = Macro()
+    converted_events = []
+
+    for event in dictionary['events']:
+        event_type, action_type, data = event
+        if event_type == 'key':
+            # Convert the string representation back to a key object
+            data = convert_string_to_key(data)
+        elif event_type == 'mouse' and action_type == 'click':
+            x, y, button, pressed = data
+            button = convert_string_to_mouse_button(button)
+            data = (x, y, button, pressed)
+        # Append the reconstructed event to the list
+        converted_events.append((event_type, action_type, data))
+
+    macro_obj.set_events(converted_events)
+    return macro_obj
+
+
+def create_via_dictionary(dictionary):
+    print(dictionary)
+    macro_obj = Macro()
+    converted_events = []
+
+    for event in dictionary['events']:
+        event_type, action_type, data = event
+        if event_type == 'key':
+            # Convert the string representation back to a key object
+            key_data = data
+            if len(key_data) == 1:
+                # It's a regular key
+                converted_key = keyboard.KeyCode.from_char(key_data)
+            else:
+                # It's a special key like 'Key.f1', 'Key.esc', etc.
+                key_name = key_data.split('.')[1]  # Get the part after 'Key.'
+                converted_key = getattr(keyboard.Key, key_name, None)  # Use getattr to get the Key object
+            converted_events.append((event_type, action_type, converted_key))
+        elif event_type == 'mouse':
+            if action_type == 'click':
+                x, y, button, pressed = data
+                button = getattr(mouse.Button, button.split('.')[1])  # Convert string to Button object
+                data = (x, y, button, pressed)
+            # Note: For mouse scroll, the data can be used as-is
+            converted_events.append((event_type, action_type, data))
+
+    macro_obj.set_events(converted_events)
+    return macro_obj
 
 
 
+
+
+
+
+"""
+def convert_string_to_key(key_str):
+    # Convert a string to a pynput key object
+    try:
+        return getattr(keyboard.Key, key_str)  # For special keys like 'esc', 'ctrl', etc.
+    except AttributeError:
+        return keyboard.KeyCode.from_char(key_str)  # For alphanumeric characters
+
+def convert_string_to_mouse_button(button_str):
+    # Convert a string to a pynput mouse button object
+    return getattr(mouse.Button, button_str)
+
+def parse_event(event_str):
+    parts = event_str.split(' ')
+    if parts[0] == 'mouse':
+        # Parsing mouse event
+        pos = tuple(map(int, parts[2][1:-1].split(',')))  # Remove parentheses and split
+        return (parts[0], parts[1], pos, parts[3] == 'True')
+    else:
+        # Parsing key event
+        return (parts[0], parts[1], parts[2])
+
+"""
 #PROCESS_PER_MONITOR_DPI_AWARE = 2
 
 #ctypes.windll.shcore.SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE)

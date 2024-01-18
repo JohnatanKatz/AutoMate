@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['H:\\Documents\\Work\\Bots\\AutoMate\\source\\main.py'],
+    ['H:\\Documents\\Work\\Bots\\AutoMate\\main.py'],
     pathex=['H:\\Documents\\Work\\Bots\\AutoMate'],
     binaries=[],
     datas=[('H:\\Documents\\Work\\Bots\\AutoMate\\assets\\*', 'assets')],

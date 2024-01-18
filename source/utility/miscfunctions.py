@@ -48,4 +48,29 @@ def base64_to_image(base64_data):
     return image
 
 def get_window_position(window):
+    """ Get the position of a Tkinter window. """
     return [int(coord) for coord in window.geometry().split('+')[1:]]
+
+def center_window(over_window, window_to_center, window_width, window_height):
+    """ Center `window_to_center` over `over_window` """
+    over_window.update_idletasks()
+    over_window.update()
+    window_to_center.update_idletasks()
+    window_to_center.update()
+
+    # Get the size and position of the main window
+    root_x = over_window.winfo_x()
+    root_y = over_window.winfo_y()
+    root_width = over_window.winfo_width()
+    root_height = over_window.winfo_height()
+    print("root_x", root_x, "root_y", root_y, "root_width", root_width, "root_height", root_height)
+
+    # Get the size of the window to center
+    print("window_width", window_width, "window_height", window_height)
+
+    # Calculate the position to center the window
+    center_x = root_x + (root_width - window_width) // 2
+    center_y = root_y + (root_height - window_height) // 2
+
+    # Set the position of the window
+    window_to_center.geometry(f"+{center_x}+{center_y}")

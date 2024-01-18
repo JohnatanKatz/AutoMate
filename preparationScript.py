@@ -12,6 +12,7 @@ spec_file_path = os.path.join(current_dir, 'main.spec')
 pyinstaller_command = f"pyinstaller {spec_file_path} -y"
 
 # Run the PyInstaller command
+print(pyinstaller_command)
 subprocess.run(pyinstaller_command, shell=True, check=True)
 
 # Define the source and destination paths relative to the current directory

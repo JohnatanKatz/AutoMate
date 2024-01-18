@@ -32,6 +32,7 @@ def save(data_rows, loop_repetitions, root):
     if file_path == "":
         return
     print(len(data_rows), "length")
+    print(data_rows)
     data_rows_save = []
     for row in data_rows:
         data_rows_save.append({'object': row['object'].return_dictionary(), 'option': row['option'],
@@ -66,6 +67,7 @@ def load(root):
     try:
         with open(file_path, "r") as file:
             data = json.load(file)
+            print("loaded json data", data)
             return data
     except Exception as e:
         toast_thread = threading.Thread(target=toast.show_toast(root, "File data is corrupted"))

@@ -5,6 +5,7 @@ import source.automations.macro as macro
 import source.automations.windowdynamics as windowdynamics
 from source.ui.macroui import MacroUI
 from source.ui.imageclickui import ImageClickUI
+from source.ui.windowdynamicsui import WindowDynamicsUI
 import time
 import source.ui.config as config
 
@@ -68,6 +69,10 @@ class AutoGridUI:
         add_row_button = ctk.CTkButton(grid_button, text="Macro",
                                        command=lambda: MacroUI(self.scrollable_frame, default_row_data, self.grid_data, root))
         add_row_button.grid(row=0, column=1, padx=10, pady=10)
+        add_row_button = ctk.CTkButton(grid_button, text="Window",
+                                       command=lambda: WindowDynamicsUI(self.scrollable_frame, default_row_data, self.grid_data,
+                                                               root))
+        add_row_button.grid(row=0, column=2, padx=10, pady=10)
 
         #Makes the grid evenly spaced
         num_columns = self.scrollable_frame.grid_size()[0]
@@ -140,16 +145,24 @@ class AutoGridUI:
         self.loop_repetitions=data['loop_repetitions']
         i=0
         for row in data['data_rows']:
+            print("loaded row data",row)
             row_data = {'option': row['option'], 'repeat': row['repeat'], 'pause': row['pause'], 'description': row['description']}
             if row['object']['type'] == 'imageClick':
-                ImageClickUI(self.scrollable_frame, row_data, self.grid_data, self.root)
+                object=ImageClickUI(self.scrollable_frame, row_data, self.grid_data, self.root)
                 self.grid_data.data_rows[i]['object'] = imageclick.create_via_dictionary(row['object'])
                 if row['object']['imgName']!="":
-                    ImageClickUI.set_image_ui(i, row['object']['imgName'])
+                    object.set_image_ui(i, row['object']['imgName'])
             elif row['object']['type'] == 'macro':
-                MacroUI(self.scrollable_frame, row_data, self.grid_data, self.root)
+                object=MacroUI(self.scrollable_frame, row_data, self.grid_data, self.root)
                 self.grid_data.data_rows[i]['object'] = macro.create_via_dictionary(row['object'])
-            i=+1
+                if row['object']['events']!=[]:
+                    object.set_macroUI(i)
+            elif row['object']['type'] == 'windowDynamics':
+                object=WindowDynamicsUI(self.scrollable_frame, row_data, self.grid_data, self.root)
+                self.grid_data.data_rows[i]['object'] = windowdynamics.create_via_dictionary(row['object'])
+                if row['object']['window']!="":
+                    object.set_windowUI(i, row['object']['toggle'])
+            i=i+1
         self.loop_repetitions = data['loop_repetitions']
 
     def save_ui(self):

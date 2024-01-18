@@ -1,6 +1,7 @@
 import tkinter as tk
 import customtkinter as ctk
 from source.utility.filehandler import get_asset
+import source.utility.miscfunctions as miscfunctions
 import source.ui.config as config
 
 class GenericLineUI:
@@ -31,7 +32,8 @@ class GenericLineUI:
         options = ["Normal", "And", "Skip"]
         dropdown_var = tk.StringVar(scrollable_frame)
         dropdown_var.set(row_data['option'])  # default Normal
-        self.dropdown = ctk.CTkOptionMenu(scrollable_frame, values=options, width=100)
+        self.dropdown = ctk.CTkOptionMenu(scrollable_frame, variable=dropdown_var, values=options, width=100, dropdown_fg_color="black")
+        self.dropdown.configure(command= lambda event, widget=self.dropdown: self.set_runtime(widget))
         self.dropdown.grid(row=self.row_number, column=2, padx=8, pady=8)
 
         # Repeat Input
@@ -93,6 +95,11 @@ class GenericLineUI:
         self.grid_data.data_rows[index]['pause'] = int(widget.get())
         self.root.focus_set()
 
+    def set_runtime(self, widget):
+        info = widget.grid_info()
+        index = int(info["row"]) - 1
+        self.grid_data.data_rows[index]['option'] = widget.get()
+
     def delete_row(self, widget):
         info = widget.grid_info()
         index = int(info["row"]) - 1
@@ -138,7 +145,7 @@ class GenericLineUI:
             return
 
         new_position = int(widget.get()) - 1
-        if index == new_position or new_position < 1:  #Same position or negative, do nothing.
+        if index == new_position or new_position < 0:  #Same position or negative, do nothing.
             print("exit2")
             print(new_position, index)
             widget.delete(0, ctk.END)
@@ -181,20 +188,25 @@ class GenericLineUI:
         def save_text():
             updated_text = text_area.get("1.0", "end-1c")
             self.grid_data.data_rows[index]['description']=updated_text
-            description_window.destroy()
-
+            self.description_window.destroy()
+        if hasattr(self, 'description_window') and self.description_window.winfo_exists():
+            self.description_window.focus_set()
+            return
         info = widget.grid_info()
         index = int(info["row"]) - 1
 
-        description_window = ctk.CTkToplevel(self.root)
-        description_window.title("Simple Text Editor")
-        description_window.geometry("600x400")
-        description_window.transient(self.root)
+        self.description_window = ctk.CTkToplevel(self.root)
+        self.description_window.title("Simple Text Editor")
+        self.description_window.wm_geometry(f"{600}x{400}")
+        self.description_window.attributes('-topmost', True)
+        self.description_window.withdraw()
+
+        #description_window.transient(self.root)
 
         print(self.grid_data.data_rows[index])
         text_content = self.grid_data.data_rows[index]['description']
 
-        text_frame = ctk.CTkFrame(description_window)
+        text_frame = ctk.CTkFrame(self.description_window)
         text_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
         text_area = ctk.CTkTextbox(text_frame, width=500, height=300, wrap="word")
@@ -206,8 +218,11 @@ class GenericLineUI:
         text_area.configure(yscrollcommand=scrollbar.set)
         text_area.insert("1.0", text_content)
 
-        save_button = ctk.CTkButton(description_window, text="Save and Close", command=save_text)
+        save_button = ctk.CTkButton(self.description_window, text="Save and Close", command=save_text)
         save_button.pack(pady=10)
+
+        miscfunctions.center_window(self.root, self.description_window,600,400)
+        self.description_window.deiconify()
 
 
 

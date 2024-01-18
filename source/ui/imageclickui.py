@@ -118,32 +118,40 @@ class ImageClickUI(GenericLineUI):
         self.grid_data.widget_rows[index].insert(1, image_input)
         self.root.update()
 
-    def view_image(self, widget):
+    def view_object(self, widget):
+        if hasattr(self, 'object_window') and self.object_window.winfo_exists():
+            self.object_window.focus_set()
+            return
         info = widget.grid_info()
         index = int(info["row"]) - 1
-        print("are we here")
-        image_window = ctk.CTkToplevel()
-        image_window.transient(self.root)
+        self.object_window = ctk.CTkToplevel(self.root)
 
-        image_window.title("Image Display")
-        image_window.geometry("400x450")
+        self.object_window.title("Image Display")
+        self.object_window.wm_geometry(f"{400}x{450}")
+        #self.object_window.attributes('-topmost', True)
+        self.object_window.withdraw()
 
-        x, y = miscfunctions.get_window_position(self.root)
-        image_window.geometry(f"+{x + 100}+{y + 40}")
+        #Convert the PIL image to a Tkinter-compatible photo image and scale it down to a 300 by 300 frame.
+        original_image = self.grid_data.data_rows[index]['object'].get_image()
+        max_size = (300, 300)
+        original_image.thumbnail(max_size, Image.Resampling.LANCZOS)
+        photo = ImageTk.PhotoImage(original_image)
 
-        photo = ImageTk.PhotoImage(self.grid_data.data_rows[index]['object'].get_image())
+        #Create Image Label
+        image_label = tk.Label(self.object_window, image=photo, borderwidth=0, highlightthickness=0)
+        image_label.image = photo
+        image_label.pack(pady=10)
 
-       # image_label = tk.Label(image_window, image=photo)
-       # image_label.image = photo
-        #image_label.pack(pady=10)
-
-        name_entry = ctk.CTkEntry(image_window, placeholder_text="Enter image name")
+        #create name entry and button to set the new name
+        name_entry = ctk.CTkEntry(self.object_window, placeholder_text="Enter image name")
         name_entry.insert(0, self.grid_data.data_rows[index]['object'].get_imgName())
         name_entry.pack(pady=10)
-
-        set_name_button = ctk.CTkButton(image_window, text="Set New Name",
+        set_name_button = ctk.CTkButton(self.object_window, text="Set New Name",
                                         command=lambda: self.set_new_name(self.grid_data.data_rows[index]['object'], name_entry))
         set_name_button.pack(pady=10)
+
+        miscfunctions.center_window(self.root, self.object_window, 400, 450)
+        self.object_window.deiconify()
 
 
     def set_new_name(self, image_click, name_entry):
