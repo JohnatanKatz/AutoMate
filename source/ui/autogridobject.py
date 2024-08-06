@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import tkinter as tk
 from source.utility.filehandler import load, save
 import source.automations.imageclick as imageclick
 import source.automations.macro as macro
@@ -32,9 +33,10 @@ class AutoGridUI:
         self.grid_data = AutoGridData()
         default_row_data = {'option': "Normal", 'repeat': 1,
                             'pause': 0, 'description': ""}
-
-        self.scrollable_frame = ctk.CTkScrollableFrame(self.root)
-        self.scrollable_frame.grid(row=0, column=1, padx=(20, 0), pady=(10, 20), sticky="nsew")
+        self.program_repeats= 0
+        self.scrollable_frame = ctk.CTkScrollableFrame(self.root, fg_color="#2A2A2A")
+        #corner_radius=0
+        self.scrollable_frame.grid(row=0, column=1, padx=(20, 0), pady=(0, 20), sticky="nsew")
         self.scrollable_frame.grid_columnconfigure(0, weight=1)
 
 
@@ -42,25 +44,25 @@ class AutoGridUI:
         ImageClickUI(self.scrollable_frame, default_row_data, self.grid_data, root)
 
         title_label = ctk.CTkLabel(self.scrollable_frame, text="Index")
-        title_label.grid(row=0, column=0, padx=4, pady=4)
+        title_label.grid(row=0, column=0, padx=4, pady=(20, 4))
         title_label = ctk.CTkLabel(self.scrollable_frame, text="Label required")
-        title_label.grid(row=0, column=1, padx=4, pady=4)
+        title_label.grid(row=0, column=1, padx=4, pady=(20, 4))
         title_label = ctk.CTkLabel(self.scrollable_frame, text="Runtime")
-        title_label.grid(row=0, column=2, padx=4, pady=4)
+        title_label.grid(row=0, column=2, padx=4, pady=(20, 4))
         title_label = ctk.CTkLabel(self.scrollable_frame, text="Repetitions")
-        title_label.grid(row=0, column=3, padx=4, pady=4)
+        title_label.grid(row=0, column=3, padx=4, pady=(20, 4))
         title_label = ctk.CTkLabel(self.scrollable_frame, text="Pause(sec)")
-        title_label.grid(row=0, column=4, padx=4, pady=4)
+        title_label.grid(row=0, column=4, padx=4, pady=(20, 4))
         title_label = ctk.CTkLabel(self.scrollable_frame, text="Description")
-        title_label.grid(row=0, column=5, padx=4, pady=4)
+        title_label.grid(row=0, column=5, padx=4, pady=(20, 4))
 
-        below_matrix = ctk.CTkFrame(self.root, fg_color=config.COLOR_SURFACE)
-        below_matrix.grid(row=1, column=1, sticky="nsew", padx=(20, 0), pady=8)
+        below_matrix = ctk.CTkFrame(self.root, fg_color="#2A2A2A")
+        below_matrix.grid(row=1, column=1, sticky="nsew", padx=(20, 0), pady=0)
 
         add_label = ctk.CTkLabel(below_matrix, text="Add Automation:")
-        add_label.pack(side="left", anchor="w", padx=8, pady=4)
+        add_label.pack(side="left", anchor="w", padx=8, pady=0)
 
-        grid_button = ctk.CTkFrame(below_matrix, fg_color=config.COLOR_SURFACE)
+        grid_button = ctk.CTkFrame(below_matrix, fg_color="#2A2A2A")
         grid_button.pack(side="right", anchor="e", padx=4, pady=4)
 
         add_row_button = ctk.CTkButton(grid_button, text="Image Recognition",
@@ -74,13 +76,27 @@ class AutoGridUI:
                                                                root))
         add_row_button.grid(row=0, column=2, padx=10, pady=10)
 
+
+
         #Makes the grid evenly spaced
         num_columns = self.scrollable_frame.grid_size()[0]
         for i in range(num_columns):
             self.scrollable_frame.grid_columnconfigure(i, weight=1)
 
-
-
+    def set_program_repeat(self, event, widget):
+        info = widget.grid_info()
+        index = int(info["row"]) - 1
+        if not ((event.type == tk.EventType.FocusOut) or (
+                event.type == tk.EventType.KeyPress and event.keysym == 'Return')):
+            raise Exception("Event type is not <FocusOut> or <Return> instead:",
+                            event)  # change to external library error.
+        if not (widget.get().isdigit()):
+            widget.delete(0, ctk.END)
+            widget.insert(0, index)
+            self.root.focus_set()
+            return
+        self.program_repeats = int(widget.get())
+        self.root.focus_set()
 
     def play_all(self):
         """
@@ -115,19 +131,22 @@ class AutoGridUI:
         """
         #print("lel")
         self.root.withdraw()
-        for object_array, repeat_array in zip(play_all_array, and_repeat_array):
-            #print("test")
-            #print(object_array, repeat_array)
-            i = 0
-            while sum(repeat_array)>0:
-                #print("repeat", repeat_array)
-                if i==len(object_array):
-                    i=0
-                if repeat_array[i]>0:
-                    repeat_array[i]=repeat_array[i]-1
-                    #print("play", repeat_array[i])
-                    object_array[i]['object'].play()
-                    time.sleep(object_array[i]['pause'])
+        i = 0
+        while self.program_repeats > i:
+            for object_array, repeat_array in zip(play_all_array, and_repeat_array):
+                #print("test")
+                #print(object_array, repeat_array)
+                i = 0
+                while sum(repeat_array)>0:
+                    #print("repeat", repeat_array)
+                    if i==len(object_array):
+                        i=0
+                    if repeat_array[i]>0:
+                        repeat_array[i]=repeat_array[i]-1
+                        #print("play", repeat_array[i])
+                        object_array[i]['object'].play()
+                        time.sleep(object_array[i]['pause'])
+            i=i+1
         self.root.deiconify()
         self.root.focus_set()
 

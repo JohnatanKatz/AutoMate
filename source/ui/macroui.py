@@ -2,6 +2,7 @@ from source.ui.lineui import GenericLineUI
 import customtkinter as ctk
 from source.automations.macro import Macro
 from source.utility.filehandler import get_asset
+import source.utility.miscfunctions as miscfunctions
 import source.ui.config
 
 class MacroUI(GenericLineUI):
@@ -44,7 +45,7 @@ class MacroUI(GenericLineUI):
 
         # Screen cut icon button (Replace with your icon)
         image_widget_name = ctk.CTkButton(macro_input, text="Macro", compound="right", width=100)
-        image_widget_name.configure(command=lambda widget=macro_input: self.view_image(widget))
+        image_widget_name.configure(command=lambda widget=macro_input: self.view_object(widget))
         image_widget_name.pack(side=ctk.LEFT, padx=(4, 0), pady=4)
 
         cancel_icon = get_asset('cancel_icon.png')  # macro.open('AutoMate/assets/delete_icon.svg')
@@ -84,17 +85,34 @@ class MacroUI(GenericLineUI):
         self.grid_data.widget_rows[index].pop(1)
         self.grid_data.widget_rows[index].insert(1, macro_input)
 
+
     def view_object(self, widget):
-        if hasattr(self, 'object_window') and self.object_window.winfo_exists():
-            self.object_window.focus_set()
+        if hasattr(self, 'macro_window') and self.macro_window.winfo_exists():
+            self.macro_window.focus_set()
             return
         info = widget.grid_info()
         index = int(info["row"]) - 1
-        self.object_window = tk.Toplevel(self.root)
-        self.object_window.title("Macro")
-        self.object_window.wm_geometry(f"{980}x{580}")
-        self.object_window.grid_columnconfigure(1, weight=1)
+        self.macro_window = ctk.CTkToplevel(self.root)
 
-        #text_area.configure(state="normal")  # Temporarily enable editing to insert text
+        self.macro_window.title("Macro Display")
+        self.macro_window.wm_geometry(f"{400}x{450}")
+        self.macro_window.withdraw()
 
-        #text_area.configure(state="disabled")  # Disable editing
+        # Get the macro's text content
+        macro_text = self.grid_data.data_rows[index]['object'].return_dictionary()
+
+        # Create a Textbox to display the macro's text content
+        text_frame = ctk.CTkFrame(self.macro_window)
+        text_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        text_area = ctk.CTkTextbox(text_frame, width=500, height=300, wrap="word")
+        text_area.pack(side="left", fill="both", expand=True)
+
+        scrollbar = ctk.CTkScrollbar(text_frame, command=text_area.yview)
+        scrollbar.pack(side="right", fill="y")
+
+        text_area.configure(yscrollcommand=scrollbar.set)
+        text_area.insert("1.0", macro_text)
+
+        miscfunctions.center_window(self.root, self.macro_window, 400, 450)
+        self.macro_window.deiconify()

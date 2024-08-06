@@ -20,7 +20,7 @@ class ButtonRowApp:
         grid_data = AutoGridData()
 
         self.root.title("AutoMate")
-        self.root.wm_geometry(f"{980}x{580}")
+        self.root.wm_geometry(f"{1000}x{580}")
 
         self.root.grid_columnconfigure(1, weight=1)
         self.root.grid_columnconfigure(2, weight=0)
@@ -29,20 +29,12 @@ class ButtonRowApp:
         #sidebar initialization
         sidebar_frame = ctk.CTkFrame(self.root, width=140, corner_radius=0, fg_color="#2A2A2A")
         sidebar_frame.grid(row=0, column=0, rowspan=2, sticky="nsew")
-        sidebar_frame.grid_rowconfigure(4, weight=1)
+        sidebar_frame.grid_rowconfigure(6, weight=1)
         primary_color = "#007BFF"
         logo_label = ctk.CTkLabel(sidebar_frame, text="AutoMate", text_color=primary_color, font=ctk.CTkFont(size=20, weight="bold"), anchor="center")
         logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        #sidebar_button_3 = ctk.CTkButton(sidebar_frame)
-        #sidebar_button_3.grid(row=4, column=0, padx=20, pady=10)
-
-        scaling_label = ctk.CTkLabel(sidebar_frame, text="UI Scaling:", anchor="w")
-        scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
-        scaling_optionemenu = ctk.CTkOptionMenu(sidebar_frame, values=["80%", "90%", "100%", "110%", "120%"],
-                                                               command=self.change_scaling_event)
-        scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
-
+        #Sidebar Buttons for differnt program options
         main_grid = AutoGridUI(root, grid_data)
         sidebar_load = ctk.CTkButton(sidebar_frame, text="Load", command=lambda: main_grid.load_ui())
         sidebar_load.grid(row=1, column=0, padx=20, pady=10)
@@ -51,11 +43,22 @@ class ButtonRowApp:
         sidebar_play_all = ctk.CTkButton(sidebar_frame, text="Play All", command=lambda: main_grid.play_all())
         sidebar_play_all.grid(row=3, column=0, padx=20, pady=10)
 
+        #Sidebar repeat input
+        pause_variable = tk.StringVar(value=str(1))  # default 1
+        scaling_label = ctk.CTkLabel(sidebar_frame, text="Total repeats:")
+        scaling_label.grid(row=4, column=0, padx=20, pady=(10, 0))
+        program_repeats = ctk.CTkEntry(sidebar_frame, textvariable=pause_variable)
+        program_repeats.configure(width=60)
+        program_repeats.grid(row=5, column=0, padx=20, pady=10)
+        program_repeats.bind("<FocusOut>", lambda event, widget=program_repeats: main_grid.set_program_repeat(event, widget))
+        program_repeats.bind("<Return>", lambda event, widget=program_repeats: main_grid.set_program_repeat(event, widget))
 
-        file_menu = tk.Menu(self.root, tearoff=0)
-        #self.root.add_cascade(label="File", menu=file_menu)
-        #file_menu.add_command(label="Open", command=self.load)
-        #file_menu.add_command(label="Save", command=self.save)
+        #Sidebar UI scaling feature
+        scaling_label = ctk.CTkLabel(sidebar_frame, text="UI Scaling:", anchor="w")
+        scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
+        scaling_optionemenu = ctk.CTkOptionMenu(sidebar_frame, values=["80%", "90%", "100%", "110%", "120%"],
+                                                               command=self.change_scaling_event)
+        scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
 
 
 

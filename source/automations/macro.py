@@ -122,7 +122,7 @@ def create_via_dictionary(dictionary):
     events=[tuple(event) for event in dictionary['events']]
     obj.set_events(events)
     return obj
-"""
+
 def create_via_dictionary(dictionary):
     macro_obj = Macro()
     converted_events = []
@@ -141,7 +141,7 @@ def create_via_dictionary(dictionary):
 
     macro_obj.set_events(converted_events)
     return macro_obj
-
+"""
 
 def create_via_dictionary(dictionary):
     print(dictionary)
