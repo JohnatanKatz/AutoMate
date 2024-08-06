@@ -10,7 +10,8 @@ A user friendly automation program. That currently includes:
 ## Installation
 
 Download the latest release from the releases tab, extract and run the executable.
-*Video guide on usage coming soon.
+
+Video guide on usage coming soon.
 
 ## Usage/Examples
 
